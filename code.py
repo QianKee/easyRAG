@@ -234,10 +234,21 @@ if use_openai:
 
 # --- 方案2: 使用本地Ollama服务 (假设已运行并拉取了qwen:1.8b模型) ---
 if not use_openai:  # 如果不使用OpenAI或OpenAI配置失败
-    from langchain_community.llms import Ollama
+    try:
+        # 尝试导入新的 langchain_ollama 包
+        from langchain_ollama import OllamaLLM
+
+        print("成功导入 langchain_ollama 包")
+    except ImportError:
+        print("正在安装 langchain-ollama 包...")
+        import subprocess
+        import sys
+
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "langchain-ollama"])
+        from langchain_ollama import OllamaLLM
 
     try:
-        llm = Ollama(
+        llm = OllamaLLM(
             model="qwen:1.8b",  # 确保Ollama服务中有名为qwen:1.8b的模型
             # 可以通过 `ollama list` 查看可用模型
             # 或通过 `ollama pull qwen:1.8b` 拉取
